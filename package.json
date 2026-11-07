@@ -1,0 +1,12 @@
+{
+  "name": "jomjalan-travel-app",
+  "version": "1.0.0",
+  "description": "JomJalan travel planning desktop application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^37.2.0"
+  }
+}

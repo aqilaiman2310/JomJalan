@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JomJalan - Travel Planner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">✈️ JomJalan</div>
+    <nav>
+      <button class="nav-button active" data-page="explorePage">Explore Destination</button>
+      <button class="nav-button" data-page="plansPage">My Travel Plans</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="explorePage" class="page active-page">
+      <div class="hero">
+        <p class="eyebrow">SMART TRAVEL PLANNER</p>
+        <h1>Find a trip that fits you.</h1>
+        <p>Tell us what you like and we’ll compare clear, consistent trip-cost estimates.</p>
+      </div>
+
+      <div class="panel">
+        <h2>What would your ideal trip look like?</h2>
+        <p class="small-note">Prices are estimates in RM, not live quotes or guaranteed prices.</p>
+        <form id="smartPlannerForm">
+          <div class="form-grid">
+            <div>
+              <label for="smartBudget">Total travel budget (RM)</label>
+              <input id="smartBudget" type="number" min="1" max="10000000" step="0.01" value="2000" required>
+            </div>
+            <div>
+              <label for="smartTravellers">Number of travellers</label>
+              <input id="smartTravellers" type="number" min="1" max="20" step="1" value="2" required>
+            </div>
+            <div>
+              <label for="smartDuration">Travel duration (days)</label>
+              <input id="smartDuration" type="number" min="1" max="30" step="1" value="3" required>
+            </div>
+            <div>
+              <label for="smartType">Preferred travel type</label>
+              <select id="smartType" required>
+                <option value="Beach">Beach</option>
+                <option value="Nature">Nature</option>
+                <option value="City">City</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Relaxation">Relaxation</option>
+              </select>
+            </div>
+            <div>
+              <label for="smartLocation">Preferred location</label>
+              <select id="smartLocation" required>
+                <option value="Malaysia">Malaysia</option>
+                <option value="International">International</option>
+              </select>
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="primary-button" type="submit">Find smart recommendations</button>
+          </div>
+          <p id="smartMessage" class="message" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div id="recommendationSection" class="panel hidden">
+        <h2>Your destination matches</h2>
+        <p id="recommendationSummary" class="message" aria-live="polite"></p>
+        <div id="recommendationList" class="destination-grid"></div>
+        <div class="button-row">
+          <button id="cancelPackageEditButton" class="secondary-button hidden" type="button">Cancel package edit</button>
+        </div>
+      </div>
+
+      <div id="packagePanel" class="panel hidden">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">YOUR ESTIMATED TRAVEL PACKAGE</p>
+            <h2 id="packageTitle">Trip itinerary</h2>
+          </div>
+          <strong id="packageTotal" class="package-total"></strong>
+        </div>
+        <p id="packageWeather" class="message"></p>
+        <p id="packageBreakdown" class="package-breakdown"></p>
+        <div id="itineraryList" class="itinerary-list"></div>
+        <p class="estimate-note">All amounts are estimates and may change. Check with providers before booking.</p>
+        <div class="button-row">
+          <button id="savePackageButton" class="primary-button" type="button">Save travel package</button>
+        </div>
+        <p id="packageMessage" class="message" aria-live="polite"></p>
+      </div>
+
+      <div class="panel">
+        <h2>Check weather for any destination</h2>
+        <form id="searchForm" class="search-form">
+          <label for="cityInput">City or destination</label>
+          <div class="search-row">
+            <input id="cityInput" type="text" placeholder="Example: Kuala Lumpur" value="Kuala Lumpur" required>
+            <button class="primary-button" type="submit">Search</button>
+          </div>
+        </form>
+        <p id="apiMessage" class="message" aria-live="polite">Search for a destination to load current weather.</p>
+      </div>
+
+      <div id="weatherCard" class="weather-card hidden">
+        <div>
+          <p class="eyebrow">CURRENT WEATHER</p>
+          <h2 id="weatherCity">Destination</h2>
+          <p id="weatherDescription">Weather information</p>
+          <p id="destinationInfo" class="small-note"></p>
+        </div>
+        <div class="temperature">
+          <span id="temperatureValue">--°C</span>
+          <span id="windValue">Wind: -- km/h</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Activity suggestion</h2>
+        <p id="suggestionText">Search a destination to receive an activity suggestion based on the weather.</p>
+        <div class="suggestion-actions">
+          <strong id="suggestedActivity"></strong>
+          <button id="favouriteButton" class="secondary-button hidden" type="button">☆ Add favourite</button>
+        </div>
+        <p id="suggestionMessage" class="message" aria-live="polite"></p>
+      </div>
+
+      <div class="panel">
+        <h2>Favourite activities</h2>
+        <div id="favouritesList" class="favourites-list"></div>
+        <p id="favouritesEmpty" class="message">No favourite activities saved yet.</p>
+      </div>
+    </section>
+
+    <section id="plansPage" class="page">
+      <div class="hero">
+        <p class="eyebrow">PLAN AHEAD</p>
+        <h1>My Travel Plans</h1>
+        <p>Save your ideas and manage your travel budget.</p>
+      </div>
+
+      <div class="panel">
+        <h2 id="formTitle">Add a travel plan</h2>
+        <form id="planForm">
+          <input id="editId" type="hidden">
+          <div class="form-grid">
+            <div>
+              <label for="planDestination">Destination</label>
+              <input id="planDestination" type="text" placeholder="Example: Penang" required>
+            </div>
+            <div>
+              <label for="travelDate">Travel date</label>
+              <input id="travelDate" type="date" required>
+            </div>
+            <div>
+              <label for="transportCost">Transport cost (RM)</label>
+              <input id="transportCost" type="number" min="0" step="0.01" placeholder="50" required>
+            </div>
+            <div>
+              <label for="hotelCost">Accommodation cost (RM)</label>
+              <input id="hotelCost" type="number" min="0" step="0.01" placeholder="120" required>
+            </div>
+            <div>
+              <label for="foodCost">Food cost (RM)</label>
+              <input id="foodCost" type="number" min="0" step="0.01" placeholder="60" required>
+            </div>
+            <div>
+              <label for="activityCost">Activity cost (RM)</label>
+              <input id="activityCost" type="number" min="0" step="0.01" placeholder="40" required>
+            </div>
+            <div>
+              <label for="planBudget">Trip budget (RM)</label>
+              <input id="planBudget" type="number" min="0" step="0.01" placeholder="500" required>
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="primary-button" type="submit" id="saveButton">Save plan</button>
+            <button class="secondary-button hidden" type="button" id="cancelEditButton">Cancel edit</button>
+          </div>
+          <p id="formMessage" class="message" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Travel budget calculator</h2>
+        <form id="budgetForm">
+          <div class="form-grid">
+            <div>
+              <label for="calcHotel">Hotel cost (RM)</label>
+              <input id="calcHotel" type="number" min="0" step="0.01" required>
+            </div>
+            <div>
+              <label for="calcFood">Food cost (RM)</label>
+              <input id="calcFood" type="number" min="0" step="0.01" required>
+            </div>
+            <div>
+              <label for="calcTransport">Transport cost (RM)</label>
+              <input id="calcTransport" type="number" min="0" step="0.01" required>
+            </div>
+            <div>
+              <label for="calcActivity">Activity cost (RM)</label>
+              <input id="calcActivity" type="number" min="0" step="0.01" required>
+            </div>
+            <div>
+              <label for="calcBudget">Your budget (RM)</label>
+              <input id="calcBudget" type="number" min="0" step="0.01" required>
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="primary-button" type="submit">Calculate budget</button>
+          </div>
+          <p id="budgetMessage" class="message" aria-live="polite">Enter your costs and budget to calculate your remaining amount.</p>
+          <p id="budgetResult" class="budget-result" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-card">
+          <span>Total saved plans</span>
+          <strong id="planCount">0</strong>
+        </div>
+        <div class="summary-card">
+          <span>Total estimated budget</span>
+          <strong id="budgetTotal">RM 0.00</strong>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Saved plans</h2>
+        <div class="plan-filters">
+          <div>
+            <label for="planSearch">Search destination</label>
+            <input id="planSearch" type="search" placeholder="Type a destination">
+          </div>
+          <div>
+            <label for="statusFilter">Filter by status</label>
+            <select id="statusFilter">
+              <option value="all">All statuses</option>
+              <option value="Planned">Planned</option>
+              <option value="Ongoing">Ongoing</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+        </div>
+        <div id="plansList" class="plans-list"></div>
+        <p id="emptyMessage" class="message">No travel plans saved yet.</p>
+        <p id="noResultsMessage" class="message hidden">No plans match your search and status filter.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>JomJalan • Student project for CSC2923</footer>
+  <script src="renderer.js"></script>
+  <script src="smart-planner.js"></script>
+</body>
+</html>
